@@ -69,8 +69,6 @@ def create_comment(username, points, time, content, outfile):
         time = "1 hour ago"
     elif math.floor(diff/60) > 1:
         time = str(math.floor(diff/60)) +" minutes ago"
-    else:
-        print("!!!!!!!!!!!!!!")
     img = Image.open("background.jpg")
     
     fnt = ImageFont.truetype("fonts/verdana.ttf", 12*3)
@@ -170,11 +168,11 @@ engine.speak("Thanks for watching, please like, subscribe, and comment!")
 stream.Close()
 
 f.close()
-os.system("ffmpeg -loglevel panic -f lavfi -i anullsrc=channel_layout=5.1:sample_rate=48000 -t 0.1 -y silence.wav")
-os.system("ffmpeg -loglevel panic -i silence.wav -f lavfi -i anullsrc -c:v copy -video_track_timescale 30k -c:a aac -ac 6 -ar 44100 -shortest -t 1 -y silence.wav")
-os.system("ffmpeg -loglevel panic -f concat -safe 0 -i list.txt -y -c copy output.wav")
-os.system("ffmpeg -loglevel panic -y -i output.wav -i background_music.wav -filter_complex amix=inputs=2:duration=first:dropout_transition=3 combined.wav")
-os.system('ffmpeg -loglevel panic -y -i combined.wav -filter_complex "afade=d=0.5, areverse, afade=d=0.5, areverse" final1.wav')
+os.system("ffmpeg -loglevel panic -f lavfi -i anullsrc=channel_layout=5.1:sample_rate=48000 -t 0.1  silence.wav")
+os.system("ffmpeg -loglevel panic -i silence.wav -f lavfi -i anullsrc -c:v copy -video_track_timescale 30k -c:a aac -ac 6 -ar 44100 -shortest -t 1  silence.wav")
+os.system("ffmpeg -loglevel panic -f concat -safe 0 -i list.txt  -c copy output.wav")
+os.system("ffmpeg -loglevel panic  -i output.wav -i background_music.wav -filter_complex amix=inputs=2:duration=first:dropout_transition=3 combined.wav")
+os.system('ffmpeg -loglevel panic  -i combined.wav -filter_complex "afade=d=0.5, areverse, afade=d=0.5, areverse" final1.wav')
 
 inFile = open("list.txt", "r")
 outFile = open("final.txt", "a")
@@ -201,4 +199,4 @@ video.write_videofile("output.mp4", fps=24, codec="mpeg4")
 
 inFile.close()
 outFile.close()
-os.system("ffmpeg -y -i final1.wav -r 30 -i output.mp4 -filter:a aresample=async=1 -c:v copy final.mp4")
+os.system("ffmpeg  -i final1.wav -r 30 -i output.mp4 -filter:a aresample=async=1 -c:v copy final.mp4")

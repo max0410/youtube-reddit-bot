@@ -25,9 +25,7 @@ def create_title(username, time, content, outfile):
         time = "1 hour ago"
     elif math.floor(diff/60) > 1:
         time = str(math.floor(diff/60)) +" minutes ago"
-    else:
-        print("!!!!!!!!!!!!!!")
-    img = Image.open("background.jpg").convert("RGBA")
+    img = Image.open("images/background.jpg").convert("RGBA")
     
     verdana = ImageFont.truetype("fonts/verdana.ttf", 12*3)
     contentFont = ImageFont.truetype("fonts/verdana.ttf", 20*3)
@@ -36,7 +34,7 @@ def create_title(username, time, content, outfile):
 
     content = textwrap.fill(content, width=55)
 
-    logo = Image.open("askredditlogo.png").convert("RGBA")
+    logo = Image.open("images/askredditlogo.png").convert("RGBA")
     logo = logo.resize((50,50))
     logow, logoh = logo.size
     w1, h1 = d.textsize("r/AskReddit", font=verdanab)
@@ -69,7 +67,7 @@ def create_comment(username, points, time, content, outfile):
         time = "1 hour ago"
     elif math.floor(diff/60) > 1:
         time = str(math.floor(diff/60)) +" minutes ago"
-    img = Image.open("background.jpg")
+    img = Image.open("images/background.jpg")
     
     fnt = ImageFont.truetype("fonts/verdana.ttf", 12*3)
     d = ImageDraw.Draw(img)
@@ -109,8 +107,8 @@ def create_comment(username, points, time, content, outfile):
     img.save(outfile)
 
 # Reddit Stuff
-reddit = praw.Reddit(client_id="-",
-                     client_secret="-",
+reddit = praw.Reddit(client_id="SjwQDX-Yrhk4YQ",
+                     client_secret="taL7y08q-qvMB_7o8ZNu1738Lag",
                      user_agent="Youtube Reddit Bot")
 
 post = list(reddit.subreddit("askReddit").top("day", limit=1))[0]
@@ -125,7 +123,7 @@ f1.close()
 f.write("")
 os.system("del /q \"pictures\*\"")
 os.system("del /q \"comments\*\"")
-os.system("del endcard.wav")
+os.system("del images/endcard.wav")
 
 engine = CreateObject("SAPI.SpVoice")
 stream = CreateObject("SAPI.SpFileStream")
@@ -171,8 +169,8 @@ f.close()
 os.system("ffmpeg -loglevel panic -f lavfi -i anullsrc=channel_layout=5.1:sample_rate=48000 -t 0.1  silence.wav")
 os.system("ffmpeg -loglevel panic -i silence.wav -f lavfi -i anullsrc -c:v copy -video_track_timescale 30k -c:a aac -ac 6 -ar 44100 -shortest -t 1  silence.wav")
 os.system("ffmpeg -loglevel panic -f concat -safe 0 -i list.txt  -c copy output.wav")
-os.system("ffmpeg -loglevel panic  -i output.wav -i background_music.wav -filter_complex amix=inputs=2:duration=first:dropout_transition=3 combined.wav")
-os.system('ffmpeg -loglevel panic  -i combined.wav -filter_complex "afade=d=0.5, areverse, afade=d=0.5, areverse" final1.wav')
+os.system("ffmpeg -loglevel panic -i output.wav -i background_music.wav -filter_complex amix=inputs=2:duration=first:dropout_transition=3 combined.wav")
+os.system('ffmpeg -loglevel panic -i combined.wav -filter_complex "afade=d=0.5, areverse, afade=d=0.5, areverse" final1.wav')
 
 inFile = open("list.txt", "r")
 outFile = open("final.txt", "a")
@@ -186,13 +184,14 @@ for line in lines:
         if "silence" not in line:
             f = sf.SoundFile(line.split("'")[1])
             line = line.replace("comment", "picture").replace(".wav",".png")
-            print(line)
             file = line.split("'")[1]
             time = (len(f) / f.samplerate) + 1.3
+            if file == "endcard.png":
+                file = "images/endcard.png"
             clips.append(ImageClip(file).set_duration(time))
 
 f = sf.SoundFile("endcard.wav")
-clips.append(ImageClip("endcard.png").set_duration((len(f) / f.samplerate) + 1.3))
+clips.append(ImageClip("images/endcard.png").set_duration((len(f) / f.samplerate) + 1.3))
 
 video = concatenate(clips, method="compose")
 video.write_videofile("output.mp4", fps=24, codec="mpeg4")

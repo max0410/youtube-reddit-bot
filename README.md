@@ -16,6 +16,7 @@ pip install Pillow
 ```
 python ytbot.py
 ```
+Output in final.mp4.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

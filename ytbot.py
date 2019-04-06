@@ -107,8 +107,8 @@ def create_comment(username, points, time, content, outfile):
     img.save(outfile)
 
 # Reddit Stuff
-reddit = praw.Reddit(client_id="SjwQDX-Yrhk4YQ",
-                     client_secret="taL7y08q-qvMB_7o8ZNu1738Lag",
+reddit = praw.Reddit(client_id="-",
+                     client_secret="-",
                      user_agent="Youtube Reddit Bot")
 
 post = list(reddit.subreddit("askReddit").top("day", limit=1))[0]
@@ -169,7 +169,11 @@ f.close()
 os.system("ffmpeg -loglevel panic -f lavfi -i anullsrc=channel_layout=5.1:sample_rate=48000 -t 0.1  silence.wav")
 os.system("ffmpeg -loglevel panic -i silence.wav -f lavfi -i anullsrc -c:v copy -video_track_timescale 30k -c:a aac -ac 6 -ar 44100 -shortest -t 1  silence.wav")
 os.system("ffmpeg -loglevel panic -f concat -safe 0 -i list.txt  -c copy output.wav")
-os.system("ffmpeg -loglevel panic -i output.wav -i background_music.wav -filter_complex amix=inputs=2:duration=first:dropout_transition=3 combined.wav")
+f = sf.SoundFile("output.wav")
+length = (len(f) / f.samplerate)/60
+print(length)
+os.system('ffmpeg -loglevel panic -lavfi "amovie=background_music.wav:loop='+str(length)+'" out.wav')
+os.system("ffmpeg -loglevel panic -i output.wav -i out.wav -filter_complex amix=inputs=2:duration=first:dropout_transition=3 combined.wav")
 os.system('ffmpeg -loglevel panic -i combined.wav -filter_complex "afade=d=0.5, areverse, afade=d=0.5, areverse" final1.wav')
 
 inFile = open("list.txt", "r")
